@@ -1,0 +1,32 @@
+mkdir frontend frontend\pages frontend\js frontend\css api config
+echo "" > frontend\pages\leverage.html
+echo "" > frontend\js\futures-analysis.js
+echo "" > frontend\js\exchange-apis.js
+echo "" > frontend\js\leverage-calculator.js
+echo "" > frontend\css\futures.css
+echo "" > api\binance-futures.js
+echo "" > api\risk-calculator.js
+echo "" > api\funding-rates.js
+echo "{}" > config\exchanges.json
+
+
+clickshift-leverage/
+│
+├── frontend/
+│   ├── pages/
+│   │   └── leverage.html
+│   ├── js/
+│   │   ├── futures-analysis.js
+│   │   ├── exchange-apis.js
+│   │   └── leverage-calculator.js
+│   └── css/
+│       └── futures.css
+│
+├── api/
+│   ├── binance-futures.js
+│   ├── risk-calculator.js
+│   └── funding-rates.js
+│
+└── config/
+    └── exchanges.json
+
