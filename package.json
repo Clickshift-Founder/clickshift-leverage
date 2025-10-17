@@ -1,25 +1,30 @@
 {
+  "_comment2": "============ PACKAGE.JSON (Replace your existing) ============",
   "name": "clickshift-leverage",
   "version": "1.0.0",
-  "description": "��#\u0000 \u0000c\u0000l\u0000i\u0000c\u0000k\u0000s\u0000h\u0000i\u0000f\u0000t\u0000 \u0000l\u0000e\u0000v\u0000e\u0000r\u0000a\u0000g\u0000e\u0000 \u0000t\u0000o\u0000o\u0000l\u0000\r\u0000 \u0000",
-  "main": "index.js",
+  "description": "Intelligent Futures Trading Platform",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'Static site - no build needed'",
+    "test": "echo 'Tests coming soon'"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Clickshift-Founder/clickshift-leverage.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Clickshift-Founder/clickshift-leverage/issues"
-  },
-  "homepage": "https://github.com/Clickshift-Founder/clickshift-leverage#readme",
   "dependencies": {
-    "axios": "^1.11.0",
+    "axios": "^1.6.0",
+    "ws": "^8.14.0",
     "technicalindicators": "^3.1.0",
-    "ws": "^8.18.3"
+    "ccxt": "^4.1.0",
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.0",
+    "node-cron": "^3.0.0",
+    "lodash": "^4.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

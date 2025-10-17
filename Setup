@@ -12,13 +12,15 @@ echo "{}" > config\exchanges.json
 
 clickshift-leverage/
 │
+|__ index.html
+|
 ├── frontend/
-│   ├── pages/
-│   │   └── leverage.html
+│   ├
 │   ├── js/
-│   │   ├── futures-analysis.js
-│   │   ├── exchange-apis.js
+│   │   ├── futures-analysis-engine.js
+│   │   ├── exchange-apis-frontend.js
 │   │   └── leverage-calculator.js
+    ||  |__ technical-indicator.js 
 │   └── css/
 │       └── futures.css
 │
@@ -28,5 +30,27 @@ clickshift-leverage/
 │   └── funding-rates.js
 │
 └── config/
-    └── exchanges.json
+|   └── exchanges.json
+|
+|__ Backend
+    |__ server.js
 
+Installed axios, ws, technicalindicators, ccxt, express, cors, dotenv, node-cron, lodash, --save-dev nodemon
+ccxt → Exchange API integration (the backbone).
+
+express → API backend for your tool.
+
+cors → Makes frontend ↔ backend communication possible.
+
+dotenv → Keeps API keys safe.
+
+node-cron → Automates recurring tasks (funding, OI tracking).
+
+lodash → Makes handling data easier and faster.
+Core data feed: ws (direct exchange sockets).
+
+User dashboards: socket.io (push signals to multiple clients).
+
+Market intelligence: cheerio (scrape extra info from non-API sources).
+
+Sentiment edge: sentiment or node-nlp (analyze trader mood/news).
