@@ -2,8 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.js",
-      "use": "@vercel/node"
+      "src": "index.html",
+      "use": "@vercel/static"
     },
     {
       "src": "frontend/**/*",
@@ -12,31 +12,28 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/health",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/css/(.*)",
+      "src": "/frontend/css/(.*)",
       "dest": "/frontend/css/$1"
     },
     {
-      "src": "/js/(.*)",
+      "src": "/frontend/js/(.*)",
       "dest": "/frontend/js/$1"
     },
     {
-      "src": "/pages/(.*)",
-      "dest": "/frontend/pages/$1"
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
     },
     {
-      "src": "/",
-      "dest": "/server.js"
+      "src": "/sw.js",
+      "dest": "/sw.js"
+    },
+    {
+      "src": "/(.*\\..+)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
