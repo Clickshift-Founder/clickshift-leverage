@@ -408,8 +408,8 @@ class WatchlistManager {
                 <div class="watchlist-header">
                     <h3>👁️ Watchlist (${this.watchlist.length})</h3>
                     <div class="watchlist-controls">
-                        <button onclick="window.watchlistManager.togglePanel()" class="toggle-btn">_</button>
-                        <button onclick="window.watchlistManager.showSettings()" class="settings-btn">⚙️</button>
+                        <button onclick="window.watchlistManager.togglePanel()" class="toggle-btn" id="watchlistToggleBtn" title="Minimize/Maximize">−</button>
+                        <button onclick="window.watchlistManager.showSettings()" class="settings-btn" title="Settings">⚙️</button>
                     </div>
                 </div>
                 
@@ -454,6 +454,17 @@ class WatchlistManager {
         `;
         
         document.body.insertAdjacentHTML('beforeend', watchlistHTML);
+
+        // Add floating eye icon for restore
+if (!document.getElementById('watchlistEye')) {
+    const eyeBtn = document.createElement('div');
+    eyeBtn.id = 'watchlistEye';
+    eyeBtn.className = 'watchlist-eye';
+    eyeBtn.innerHTML = '👁️';
+    eyeBtn.onclick = () => window.watchlistManager.togglePanel();
+    document.body.appendChild(eyeBtn);
+}
+
         
         // Add CSS if not already present
         if (!document.getElementById('watchlistStyles')) {
@@ -582,8 +593,23 @@ class WatchlistManager {
     
     togglePanel() {
         const panel = document.getElementById('watchlistPanel');
+        const toggleBtn = document.getElementById('watchlistToggleBtn');
+        
         if (panel) {
-            panel.classList.toggle('collapsed');
+            const isCollapsed = panel.classList.toggle('collapsed');
+            
+            // Update button icon
+            if (toggleBtn) {
+                toggleBtn.textContent = isCollapsed ? '+' : '−';
+                toggleBtn.title = isCollapsed ? 'Show Watchlist' : 'Hide Watchlist';
+            }
+
+              // Show/hide eye icon
+        if (eyeBtn) {
+            eyeBtn.style.display = isCollapsed ? 'flex' : 'none';
+        }
+            
+            console.log(`Watchlist ${isCollapsed ? 'minimized' : 'expanded'}`);
         }
     }
     
@@ -634,7 +660,11 @@ watchlistManager.checkInterval = 600000; // 10 minutes`);
             }
             
             .watchlist-panel.collapsed {
-                transform: translateX(340px);
+                transform: translateX(calc(100% - 60px));
+            }
+            
+            .watchlist-panel.collapsed .watchlist-content {
+                display: none;
             }
             
             .watchlist-header {
