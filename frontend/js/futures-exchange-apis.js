@@ -3,6 +3,9 @@
 // PRODUCTION-READY VERSION WITH FULL FUTURES SUPPORT
 // ========================================
 
+// At the top of futures-exchange-apis.js
+const USE_PROXY = true;
+const PROXY_URL = 'https://leverage.clickshift.io/api/proxy';
 class FuturesExchangeAPIs {
     constructor() {
         this.cache = new Map();
@@ -109,10 +112,12 @@ class FuturesExchangeAPIs {
             
             console.log(`📡 Binance Futures: Fetching ${normalizedSymbol}...`);
             
-            // CORRECT FUTURES ENDPOINT
-            const tickerResponse = await fetch(
-                `https://fapi.binance.com/fapi/v1/ticker/24hr?symbol=${normalizedSymbol}`,
-                {
+              // PROXY MODIFICATION - Ticker endpoint
+        const tickerUrl = USE_PROXY
+            ? `${PROXY_URL}?exchange=binance-futures&endpoint=ticker/24hr&symbol=${normalizedSymbol}`
+            : `https://fapi.binance.com/fapi/v1/ticker/24hr?symbol=${normalizedSymbol}`;
+        
+        const tickerResponse = await fetch(tickerUrl, {
                     method: 'GET',
                     headers: { 
                         'Accept': 'application/json',
@@ -143,10 +148,12 @@ class FuturesExchangeAPIs {
             let fundingRate = 0;
             let nextFundingTime = null;
             
-            try {
-                const fundingResponse = await fetch(
-                    `https://fapi.binance.com/fapi/v1/fundingRate?symbol=${normalizedSymbol}&limit=1`
-                );
+             try {
+            const fundingUrl = USE_PROXY
+                ? `${PROXY_URL}?exchange=binance-futures&endpoint=fundingRate&symbol=${normalizedSymbol}&limit=1`
+                : `https://fapi.binance.com/fapi/v1/fundingRate?symbol=${normalizedSymbol}&limit=1`;
+            
+            const fundingResponse = await fetch(fundingUrl);
                 
                 if (fundingResponse.ok) {
                     const fundingData = await fundingResponse.json();
@@ -163,10 +170,12 @@ class FuturesExchangeAPIs {
             let openInterest = 0;
             let openInterestValue = 0;
             
-            try {
-                const oiResponse = await fetch(
-                    `https://fapi.binance.com/fapi/v1/openInterest?symbol=${normalizedSymbol}`
-                );
+          try {
+            const oiUrl = USE_PROXY
+                ? `${PROXY_URL}?exchange=binance-futures&endpoint=openInterest&symbol=${normalizedSymbol}`
+                : `https://fapi.binance.com/fapi/v1/openInterest?symbol=${normalizedSymbol}`;
+            
+            const oiResponse = await fetch(oiUrl);
                 
                 if (oiResponse.ok) {
                     const oiData = await oiResponse.json();
@@ -220,15 +229,19 @@ class FuturesExchangeAPIs {
             console.log(`📡 Bybit Futures: Fetching ${normalizedSymbol}...`);
             
             // Bybit v5 API for linear perpetuals
-            const response = await fetch(
-                `https://api.bybit.com/v5/market/tickers?category=linear&symbol=${normalizedSymbol}`,
-                {
+             
+    // PROXY MODIFICATION
+    const url = USE_PROXY
+        ? `${PROXY_URL}?exchange=bybit&endpoint=tickers&category=linear&symbol=${normalizedSymbol}`
+        : `https://api.bybit.com/v5/market/tickers?category=linear&symbol=${normalizedSymbol}`;
+    
+    const response = await fetch(url, {
                     method: 'GET',
                     headers: { 
                         'Accept': 'application/json',
                         'Cache-Control': 'no-cache'
                     },
-                    signal: AbortSignal.timeout(5000)
+                    signal: AbortSignal.timeout(USE_PROXY ? 10000 : 5000)
                 }
             );
 

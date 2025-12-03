@@ -23,7 +23,7 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
     
-    const { exchange, endpoint, symbol } = req.query;
+    const { exchange, endpoint, symbol, category, ids, vs_currencies, include_24hr_change, include_24hr_vol, limit } = req.query;
     
     try {
         let apiUrl;
@@ -33,21 +33,49 @@ export default async function handler(req, res) {
             case 'binance':
                 apiUrl = `https://api.binance.com/api/v3/${endpoint}${symbol ? `?symbol=${symbol}` : ''}`;
                 break;
+                
             case 'binance-futures':
-                apiUrl = `https://fapi.binance.com/fapi/v1/${endpoint}${symbol ? `?symbol=${symbol}` : ''}`;
+                // Handle multiple futures endpoints
+                if (endpoint === 'ticker/24hr') {
+                    apiUrl = `https://fapi.binance.com/fapi/v1/ticker/24hr?symbol=${symbol}`;
+                } else if (endpoint === 'fundingRate') {
+                    apiUrl = `https://fapi.binance.com/fapi/v1/fundingRate?symbol=${symbol}&limit=${limit || 1}`;
+                } else if (endpoint === 'openInterest') {
+                    apiUrl = `https://fapi.binance.com/fapi/v1/openInterest?symbol=${symbol}`;
+                } else {
+                    apiUrl = `https://fapi.binance.com/fapi/v1/${endpoint}${symbol ? `?symbol=${symbol}` : ''}`;
+                }
                 break;
+                
             case 'bybit':
-                apiUrl = `https://api.bybit.com/v5/market/${endpoint}${symbol ? `?symbol=${symbol}` : ''}`;
+                // Handle Bybit's complex query parameters
+                if (endpoint === 'tickers' && category) {
+                    apiUrl = `https://api.bybit.com/v5/market/tickers?category=${category}${symbol ? `&symbol=${symbol}` : ''}`;
+                } else {
+                    apiUrl = `https://api.bybit.com/v5/market/${endpoint}${symbol ? `?symbol=${symbol}` : ''}`;
+                }
                 break;
+                
             case 'coingecko':
-                apiUrl = `https://api.coingecko.com/api/v3/${endpoint}`;
+                // Handle CoinGecko's complex parameters
+                if (endpoint === 'simple/price') {
+                    apiUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=${vs_currencies || 'usd'}`;
+                    if (include_24hr_change === 'true') apiUrl += '&include_24hr_change=true';
+                    if (include_24hr_vol === 'true') apiUrl += '&include_24hr_vol=true';
+                } else {
+                    apiUrl = `https://api.coingecko.com/api/v3/${endpoint}`;
+                }
                 break;
+                
             case 'dexscreener':
                 apiUrl = `https://api.dexscreener.com/latest/dex/${endpoint}`;
                 break;
+                
             default:
                 return res.status(400).json({ error: 'Invalid exchange' });
         }
+        
+        console.log('Proxying to:', apiUrl); // Debug log
         
         // Fetch from the actual API
         const response = await fetch(apiUrl, {
@@ -69,7 +97,7 @@ export default async function handler(req, res) {
         // Return demo data as fallback
         return res.status(200).json({
             symbol: symbol || 'BTCUSDT',
-            price: '65432.10',
+            lastPrice: '65432.10',
             priceChangePercent: '2.45',
             volume: '1234567890',
             source: 'demo_fallback',
